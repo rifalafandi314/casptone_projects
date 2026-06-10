@@ -1,42 +1,40 @@
-import os
 import pickle
+import tempfile
 import torch
 
+from huggingface_hub import snapshot_download
 from transformers import (
     DistilBertTokenizerFast,
     DistilBertForSequenceClassification
 )
 
-BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
+MODEL_NAME = "rifal742/mental_health"
+
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
 )
 
-MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "mental_health_model"
+repo_path = snapshot_download(
+    repo_id=MODEL_NAME
 )
 
-print("MODEL PATH:", MODEL_PATH)
-
-device = torch.device("cpu")
+MODEL_PATH = f"{repo_path}/mental_health_model"
 
 tokenizer = DistilBertTokenizerFast.from_pretrained(
-    MODEL_PATH,
-    local_files_only=True
+    MODEL_PATH
 )
 
 model = DistilBertForSequenceClassification.from_pretrained(
-    MODEL_PATH,
-    local_files_only=True
+    MODEL_PATH
 )
 
-model.to(device)
-
-model.eval()
-
 with open(
-    os.path.join(MODEL_PATH, "label_encoder.pkl"),
+    f"{MODEL_PATH}/label_encoder.pkl",
     "rb"
 ) as f:
-
     label_encoder = pickle.load(f)
+
+model.to(device)
+model.eval()
+
+print("Model loaded successfully")

@@ -19,7 +19,7 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"status": "running"}
+    return {"message": "Mental Health API running 🚀"}
 
 @app.post("/predict")
 def predict(request: PredictRequest):

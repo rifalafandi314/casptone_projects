@@ -64,11 +64,6 @@ pip install -r requirements.txt
 
 Jalankan server FastAPI:
 
-```bash
-uvicorn app.main:app --reload
-```
-
-atau sesuaikan dengan entry point project:
 
 ```bash
 uvicorn main:app --reload
@@ -118,11 +113,38 @@ http://localhost:5173
 
 ## Konfigurasi API
 
-Seluruh komunikasi antara frontend dan backend dilakukan melalui file:
+
+Seluruh komunikasi antara frontend dan backend dikonfigurasi melalui file:
 
 ```text
 src/service/api.js
 ```
+
+File ini berfungsi sebagai pusat konfigurasi alamat API (*base URL*) yang digunakan oleh frontend untuk mengirim dan menerima data dari backend. Dengan memusatkan konfigurasi pada satu file, perubahan alamat server backend dapat dilakukan dengan lebih mudah tanpa perlu mengubah banyak file pada proyek frontend.
+
+Karena backend berjalan pada **port 8000**, maka alamat API pada file `api.js` harus disesuaikan menjadi:
+
+```javascript
+const API_URL = "http://localhost:8000";
+```
+
+Atau jika menggunakan Axios:
+
+```javascript
+import axios from "axios";
+
+export default axios.create({
+    baseURL: "http://localhost:8000",
+});
+```
+
+Dengan konfigurasi tersebut, seluruh request dari frontend akan diarahkan ke server backend yang berjalan pada alamat:
+
+```text
+http://localhost:8000
+```
+
+Apabila backend dipindahkan ke server atau port lain, cukup ubah nilai URL pada file `src/service/api.js` tanpa perlu melakukan perubahan pada komponen frontend lainnya.
 
 File tersebut digunakan untuk melakukan request ke endpoint FastAPI dan mengelola seluruh pemanggilan API dari frontend.
 
